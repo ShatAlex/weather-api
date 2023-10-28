@@ -73,10 +73,19 @@ async def gather_data(urls: list[dict]):
 
 async def get_city_data(url: dict, sch:int):
     from selenium import webdriver
+    # from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
+    # chrome_options = Options()
+    # chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--no-sandbox')
+    # chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options = webdriver.ChromeOptions()
+    # driver = webdriver.Remote("http://chrome:4444/wd/hub", DesiredCapabilities.CHROME, options=chrome_options)   
     driver = webdriver.Chrome()
     for key, val in url.items():
         driver.get(val)
-        time.sleep(5)
+        time.sleep(10)
         html = driver.page_source
         soup = BeautifulSoup(html, 'lxml')
 
@@ -93,14 +102,23 @@ async def get_city_data(url: dict, sch:int):
         
     print(f'[INFO] Город №{sch} записан. URL: {url}')
 
+async def gather_insert(data:list):
+    tasks = []
+    for item in data:
+        task =  asyncio.create_task(post_weather_data_to_db(INSERT_WEATHER_URL, item))
+        tasks.append(task)
+    await asyncio.gather(*tasks)
+    
+
 def main():
     while True:
         urls = asyncio.run(gather_urls())
         asyncio.run(gather_data(urls))
-        for item in insert_data:
-            asyncio.run(post_weather_data_to_db(INSERT_WEATHER_URL, item))
-            print(f'[INFO] Парсер записал данные {datetime.now()}')    
+        asyncio.run(gather_insert(insert_data))
+        print(f'[INFO] Парсер записал данные {datetime.now()}')
+
         time.sleep(60)
+        
 
 if __name__ == '__main__':
     main()

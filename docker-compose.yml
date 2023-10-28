@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: db_weather
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: -p ${DB_PORT}
+    expose:
+      - ${DB_PORT}
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+  weather-api:
+    build: .
+    container_name: app_weather
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: ./docker/run.sh ./docker/tmp.sh
+    ports:
+      - '8000:8000'
+
+  selenium:
+    image: selenium/standalone-chrome
+    hostname: chrome
+    ports:
+    - "4444:4444"
+
+volumes:
+  postgres_data:
