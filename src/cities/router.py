@@ -30,7 +30,6 @@ router_tmp = APIRouter(
 @router_weathers.post('/{city}')
 async def add_city(city: str, session: AsyncSession = Depends(get_async_session)):
     """ Эндпоинт добавления нового города в БД """
-
     with open('src/parser/cities_id.json') as json_file:
         data = json.load(json_file)
 
@@ -53,7 +52,6 @@ async def add_city(city: str, session: AsyncSession = Depends(get_async_session)
 @router_weathers.get('/')
 async def get_last_weathers(search: str = "", session: AsyncSession = Depends(get_async_session)):
     """ Эндпоинт получения всех городов с последней записанной температурой """
-
     t = select(
         (func.row_number().over(partition_by=City.city_name, order_by=desc(Weather.date))).label("rn"),
         City.city_name,
@@ -77,7 +75,6 @@ async def get_last_weathers(search: str = "", session: AsyncSession = Depends(ge
 @router_weathers.get('/all_by_city')
 async def get_average(city: str, date1: str , date2: str, session: AsyncSession = Depends(get_async_session)):
     """ Эндпоинт для получения всех данных и средних значений за указанный период """
-
     left_date = datetime.strptime(date1, "%Y-%m-%d %H:%M:%S")
     right_date = datetime.strptime(date2, "%Y-%m-%d %H:%M:%S")
 
@@ -104,7 +101,6 @@ async def get_average(city: str, date1: str , date2: str, session: AsyncSession 
 @router_cities.get('/')
 async def get_cities(session: AsyncSession = Depends(get_async_session)):
     """ Эндпоинт получения всех городов """
-
     query = select(City.id, City.city_name).select_from(City)
 
     result = await session.execute(query)

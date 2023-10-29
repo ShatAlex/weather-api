@@ -22,7 +22,6 @@ class Weather(Base):
     id: int = Column(Integer, primary_key=True)
     temperature: int = Column(Integer, nullable=False)
     pressure: int = Column(Integer, nullable=False)
-    wind : float = Column(Float, nullable=False)
+    wind: float = Column(Float, nullable=False)
     date: datetime = Column(TIMESTAMP, default=datetime.utcnow)
     city = Column(Integer, ForeignKey('cities.id'))
-

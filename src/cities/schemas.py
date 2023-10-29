@@ -9,6 +9,7 @@ class CityCreate(BaseModel):
     class Config:
         orm_mode = True
 
+
 class Payload(BaseModel):
     id: int
     temperature: int
