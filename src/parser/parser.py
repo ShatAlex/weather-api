@@ -7,10 +7,6 @@ import time
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-
-API_KEY = "d1481e10070407d658b1317704d367f0"
-URL = "https://openweathermap.org/city/id"
-
 insert_data = []
 
 GET_ALL_CITIES_URL = "http://127.0.0.1:8000/cities/"
@@ -73,16 +69,11 @@ async def gather_data(urls: list[dict]):
 
 async def get_city_data(url: dict, sch:int):
     from selenium import webdriver
-    # from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-    # chrome_options = Options()
-    # chrome_options.add_argument('--headless')
-    # chrome_options.add_argument('--no-sandbox')
-    # chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options = webdriver.ChromeOptions()
-    # driver = webdriver.Remote("http://chrome:4444/wd/hub", DesiredCapabilities.CHROME, options=chrome_options)   
-    driver = webdriver.Chrome()
+    driver = webdriver.Remote("http://chrome:4444/wd/hub", DesiredCapabilities.CHROME, options=chrome_options)   
     for key, val in url.items():
         driver.get(val)
         time.sleep(10)
@@ -99,6 +90,8 @@ async def get_city_data(url: dict, sch:int):
             'wind': wind,
             'pressure': pressure
             })
+    driver.close()
+    driver.quit()
         
     print(f'[INFO] Город №{sch} записан. URL: {url}')
 
@@ -108,17 +101,17 @@ async def gather_insert(data:list):
         task =  asyncio.create_task(post_weather_data_to_db(INSERT_WEATHER_URL, item))
         tasks.append(task)
     await asyncio.gather(*tasks)
-    
+        
 
-def main():
+def main(data: list):
+    print("[INFO] Парсер начал работать")
     while True:
         urls = asyncio.run(gather_urls())
         asyncio.run(gather_data(urls))
-        asyncio.run(gather_insert(insert_data))
+        asyncio.run(gather_insert(data))
+        data[:] = []
         print(f'[INFO] Парсер записал данные {datetime.now()}')
-
         time.sleep(60)
-        
 
 if __name__ == '__main__':
-    main()
+    main(insert_data)
