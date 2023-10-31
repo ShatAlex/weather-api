@@ -21,11 +21,6 @@ router_cities = APIRouter(
     tags=['Cities']
 )
 
-router_tmp = APIRouter(
-    prefix='/tmp',
-    tags=['Tmp']
-)
-
 
 @router_weathers.post('/{city}')
 async def add_city(city: str, session: AsyncSession = Depends(get_async_session)):
@@ -116,7 +111,7 @@ async def get_cities(session: AsyncSession = Depends(get_async_session)):
         'details': None
     }
 
-@router_tmp.post('/post')
+@router_cities.post('/add_weather')
 async def add_weathers(data:Payload, session: AsyncSession = Depends(get_async_session)):
     """ Эндпоинт добавления данных с парсера в БД"""
     stmt = insert(Weather).values(

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.cities.router import router_weathers, router_cities, router_tmp
+from src.cities.router import router_weathers, router_cities
 
 app = FastAPI(
     title='WeatherAPI',
@@ -14,4 +14,3 @@ origins = [
 
 app.include_router(router_weathers)
 app.include_router(router_cities)
-app.include_router(router_tmp)

@@ -11,7 +11,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 GET_ALL_CITIES_URL = "http://127.0.0.1:8000/cities/"
-INSERT_WEATHER_URL = "http://127.0.0.1:8000/tmp/post"
+INSERT_WEATHER_URL = "http://127.0.0.1:8000/cities/add_weather"
 
 insert_data = []
 
